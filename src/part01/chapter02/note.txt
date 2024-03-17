@@ -1,0 +1,21 @@
+热更新（hot module replacement HMR）：
+
+Tree-Shaking
+
+IIFE形式资源
+
+原生ESM
+
+cjs/mjs
+1. cjs：CommonJS nodejs
+2. mjs：ModuleJS ESM
+
+package.json中的module字段
+1. main字段：cjs入口文件
+2. module字段：mjs入口文件（优先级更高）
+
+打包出来-bundler和-browser文件区别：
+1. -bundler是给打包工具使用的入口文件
+2. -browser是给浏览器esm模块化使用的
+
+
