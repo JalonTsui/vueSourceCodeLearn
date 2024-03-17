@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script type="module">
+    import { default as a } from "../js/reactive01.js";
+    const { effect, reactive } = a;
+
+    // 响应式对象
+    const obj = reactive({
+      text: "hello world",
+      aaa: true,
+    });
+
+    // 数据改变后要执行的函数
+    effect(
+      () => {
+        console.log("effect run");
+        document.body.innerText = obj.aaa ? obj.text : "hello";
+      },
+      {
+        scheduler(fn) {
+          setTimeout(() => {
+            fn();
+          }, 1000);
+        },
+      }
+    );
+
+    setTimeout(()=>{
+        console.log("test scheduler");
+    },1500)
+
+    setTimeout(() => {
+      obj.text = "reactive data";
+    }, 1000);
+
+    setTimeout(() => {
+      obj.aaa = false;
+    }, 2000);
+
+    setTimeout(() => {
+      obj.text = "reactive data aaa";
+    }, 3000);
+  </script>
+</html>

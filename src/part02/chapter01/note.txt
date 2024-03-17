@@ -1,0 +1,5 @@
+副作用：
+函数1的执行会影响到其他函数执行结果，就可以说函数1对其他函数产生了副作用
+
+IIFE(imdiately invoked function expression)：
+立即执行的函数表达式
