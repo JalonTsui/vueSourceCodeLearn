@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script type="module">
+    import a from "../js/reactive01.js";
+    const { computed, reactive, effect } = a;
+    const data = reactive({
+      n1: 1,
+      n2: 2,
+    });
+    debugger;
+    const sum = computed(() => data.n1 + data.n2);
+    effect(() => {
+      document.body.innerText = sum.value;
+    });
+    data.n1++;
+  </script>
+</html>

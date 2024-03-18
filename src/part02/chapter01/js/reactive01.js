@@ -22,17 +22,98 @@ const bucket = new WeakMap();
 
 function effect(fn, options = {}) {
   const effectFn = () => {
+    console.log("effect invoke");
     clearup(effectFn);
     activeEffect = effectFn;
     effectStack.push(effectFn);
-    fn();
+    const res = fn();
     effectStack.pop();
     activeEffect = effectStack[effectStack.length - 1];
+    return res;
   };
   effectFn.options = options;
   // 存储于该副作用函数关联的依赖集合
   effectFn.deps = [];
-  effectFn();
+  if (!options.lazy) {
+    effectFn();
+  }
+  return effectFn;
+}
+
+function watch(target, cb, options = {}) {
+  let getter;
+  if (typeof target === "function") {
+    getter = target;
+  } else {
+    getter = () => {
+      return traverse(target);
+    };
+  }
+  // 解决watch的竞态问题
+  let cleanup;
+  function onVaildate(fn) {
+    cleanup = fn;
+  }
+  let oldValue, newValue;
+  function job() {
+    if (cleanup) cleanup();
+    newValue = effectFn();
+    cb(newValue, oldValue, onVaildate);
+    oldValue = newValue;
+  }
+  const effectFn = effect(
+    () => {
+      return getter();
+    },
+    {
+      lazy: true,
+      scheduler() {
+        if (options.flush === "post") {
+          const p = Promise.resolve();
+          p.then(job);
+        } else {
+          job();
+        }
+      },
+    }
+  );
+  if (options.immediate) {
+    job();
+  } else {
+    oldValue = effectFn();
+  }
+}
+
+function traverse(obj, seen = new Set()) {
+  if (typeof obj !== "object" || obj === null || seen.has(obj)) return;
+  seen.add(obj);
+  for (let k in obj) {
+    traverse(obj[k], seen);
+  }
+  return obj;
+}
+
+function computed(getter) {
+  let isOldValue = true;
+  let value;
+  const effectFn = effect(getter, {
+    lazy: true,
+    scheduler() {
+      isOldValue = true;
+      trigger(obj, "value");
+    },
+  });
+  const obj = {
+    get value() {
+      if (isOldValue) {
+        value = effectFn();
+        track(obj, "value");
+        isOldValue = false;
+      }
+      return value;
+    },
+  };
+  return obj;
 }
 
 function clearup(effectFn) {
@@ -96,4 +177,6 @@ function trigger(target, key) {
 export default {
   reactive,
   effect,
+  computed,
+  watch,
 };

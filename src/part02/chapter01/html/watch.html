@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script type="module">
+    import a from "../js/reactive01.js";
+    const { reactive, watch } = a;
+
+    const data = reactive({
+      foo: "hello",
+    });
+
+    watch(
+      () => data.foo,
+      (newV, old) => {
+        console.log("newV===>>>", newV);
+        console.log("old===>>>", old);
+      },
+      {
+        immediate: true,
+      }
+    );
+
+    // data.foo = "hello world";
+    // data.foo = "123";
+  </script>
+</html>

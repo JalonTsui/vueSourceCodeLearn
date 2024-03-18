@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script type="module">
+    import { default as a } from "../js/reactive01.js";
+    const { reactive, effect } = a;
+
+    let flag = false;
+    const set = new Set();
+    const p = Promise.resolve();
+
+    function flushJob() {
+      if (flag) return;
+      flag = true;
+      p.then(() => {
+        set.forEach((fn) => {
+          fn();
+        });
+        flag = false;
+      });
+    }
+
+    const data = reactive({
+      num: 0,
+    });
+
+    effect(
+      () => {
+        console.log(data.num);
+      },
+      {
+        scheduler(fn) {
+          set.add(fn);
+          flushJob();
+        },
+      }
+    );
+
+    data.num++;
+    data.num++;
+  </script>
+</html>
