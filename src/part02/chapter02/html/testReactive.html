@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script type="module">
+    import a from "../js/reactive.js";
+    const { effect, reactive } = a;
+    // debugger;
+    const obj = {
+      a: 1,
+      get b() {
+        return this.a;
+      },
+    };
+    const data = reactive(obj);
+    effect(() => {
+      debugger;
+      // 这里只是收集了data.b的依赖，data.b会触发，obj的getter，但是里面的this还是obj
+      // 且obj里面的this本身是没有做代理的，所以不会收集data.a的依赖
+      console.log(data.b);
+    });
+    data.a++;
+  </script>
+</html>

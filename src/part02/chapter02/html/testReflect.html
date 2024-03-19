@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script type="module">
+    const obj = {
+      a: 1,
+      get b() {
+        return this.a;
+      },
+    };
+
+    const a = Reflect.get(obj, "a");
+    console.log(a); // 1
+
+    const b = Reflect.get(obj, "a", { a: 2 });
+    console.log(b); // 1
+
+    // Refect的第三个参数，当遇到对象里面用get读取一个属性的时候，里面的this会替换为第三个参数
+    const c = Reflect.get(obj, "b", { b: 3, a: 2 });
+    console.log(c); // 2
+  </script>
+</html>
