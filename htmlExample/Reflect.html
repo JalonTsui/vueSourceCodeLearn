@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflect</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    const person = {
+        firstName: '张',
+        lastName: '三',
+        get fullName() {
+            return this.firstName + this.lastName;
+        }
+    };
+
+    const proxyPerson = new Proxy(person, {
+        // target: 被代理的对象
+        // receiver: 代理对象自己
+        get(target, key, receiver) {
+            console.log('getter trigger');
+            // 第三个参数，数据读取时，如果读取的时对象上的getter方法，则把getter方法里面的this改变成第三个传入的参数
+            // getter触发三次
+            return Reflect.get(target, key, receiver);
+            // getter只能触发一次
+            // return target[key]
+        },
+        set(target, key, newVal, receiver) {
+            target[key] = newVal;
+            effect();
+        }
+    })
+
+    const effect = () => {
+        name = proxyPerson.fullName;
+    }
+
+    let name = proxyPerson.fullName;
+
+    console.log(name);
+</script>
+
+</html>

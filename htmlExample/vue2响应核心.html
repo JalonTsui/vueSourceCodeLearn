@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue2 响应核心</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    let quantity = 20;
+
+    const product = {
+        price: 10,
+        quantity: quantity
+    }
+
+    let total = 0;
+
+    const effect = () => {
+        total = product.price * product.quantity;
+    }
+
+    effect();
+
+    // vue2响应式核心
+    Object.defineProperty(product, 'quantity', {
+        // 读取对象属性的getter
+        get() {
+            return quantity;
+        },
+        // 给对象赋值的setter
+        set(newVal) {
+            quantity = newVal;
+            effect();
+        }
+    });
+
+
+
+</script>
+
+</html>
