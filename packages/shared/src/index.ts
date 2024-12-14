@@ -1,3 +1,3 @@
-export const isArray = () => {
-  console.log("ininini");
+export const isArray = (obj: unknown) => {
+  return Array.isArray(obj);
 };

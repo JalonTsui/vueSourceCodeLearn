@@ -1,4 +1,5 @@
 import { createDep, Dep } from "./dep";
+import { isArray } from "@vue/shared";
 // 当前运行的作用域
 export let activeEffect: ReactiveEffect | undefined;
 
@@ -62,7 +63,7 @@ export function trigger(target: object, key: string | symbol) {
 }
 
 function triggerEffects(dep: Dep) {
-  const effects = Array.isArray(dep) ? dep : [...dep];
+  const effects = isArray(dep) ? dep : [...dep];
 
   for (const effect of effects) {
     triggerEffect(effect);
