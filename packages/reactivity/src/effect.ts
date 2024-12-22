@@ -41,7 +41,7 @@ export function track(target: object, key: string | symbol) {
   trackEffects(dep);
 }
 
-function trackEffects(dep: Dep) {
+export function trackEffects(dep: Dep) {
   activeEffect && dep.add(activeEffect);
 }
 
@@ -62,7 +62,7 @@ export function trigger(target: object, key: string | symbol) {
   triggerEffects(dep);
 }
 
-function triggerEffects(dep: Dep) {
+export function triggerEffects(dep: Dep) {
   const effects = isArray(dep) ? dep : [...dep];
 
   for (const effect of effects) {

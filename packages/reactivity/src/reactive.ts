@@ -1,4 +1,18 @@
 import { mutableHandler } from "./baseHandlers";
+import { isObject } from "@vue/shared";
+
+export const enum ReactiveFlags {
+  RAW = "__v_raw"
+}
+
+export function toRaw<T>(observed: T): T {
+  const raw = observed && observed[ReactiveFlags.RAW];
+  return raw ? toRaw(observed) : observed;
+}
+
+export function toReactive<T extends unknown>(value: T): T {
+  return isObject(value) ? reactive(value) : value;
+}
 
 // 记录已经创建的proxy对象 key: 被代理对象，value：代理对象
 export const reactiveMap = new WeakMap();
