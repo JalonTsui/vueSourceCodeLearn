@@ -3,13 +3,17 @@ import { isArray } from "@vue/shared";
 // 当前运行的作用域
 export let activeEffect: ReactiveEffect | undefined;
 
+export type EffectScheduler = (...args: any[]) => any;
 // 响应式数据的作用域
 export class ReactiveEffect<T = any> {
-  constructor(public fn: () => T) {}
+  constructor(
+    public fn: () => T,
+    public scheduler: EffectScheduler | null = null
+  ) {}
 
   run() {
     activeEffect = this;
-    this.fn();
+    return this.fn();
   }
 }
 
@@ -65,11 +69,24 @@ export function trigger(target: object, key: string | symbol) {
 export function triggerEffects(dep: Dep) {
   const effects = isArray(dep) ? dep : [...dep];
 
+  // computed收集依赖的时候会把自己也收集进去(当在一个effect里面调用两次computed的时候)，配合_dirty参数，防止死循环，先执行computed的依赖
   for (const effect of effects) {
-    triggerEffect(effect);
+    if (effect.scheduler) {
+      triggerEffect(effect);
+    }
+  }
+
+  for (const effect of effects) {
+    if (!effect.scheduler) {
+      triggerEffect(effect);
+    }
   }
 }
 
 function triggerEffect(effect: ReactiveEffect) {
-  effect.fn();
+  if (effect.scheduler) {
+    effect.scheduler();
+  } else {
+    effect.fn();
+  }
 }

@@ -55,13 +55,18 @@ class RefImpl<T> {
   }
 }
 
-export function trackRefValue(ref: RefImpl<any>) {
+type RefBase<T> = {
+  dep?: Dep;
+  value: T;
+};
+
+export function trackRefValue(ref: RefBase<any>) {
   if (activeEffect) {
     trackEffects(ref.dep || (ref.dep = createDep()));
   }
 }
 
-export function triggerRefValue(ref: RefImpl<any>, newVal?: any) {
+export function triggerRefValue(ref: RefBase<any>, newVal?: any) {
   ref = toRaw(ref);
   if (ref.dep) {
     triggerEffects(ref.dep);
